@@ -1,5 +1,5 @@
 # Resource group de azure, de donde cuelgan los recursos
-resource "azurerm_resource_group" "vm" {
+resource "azurerm_resource_group" "cp2" {
   name     = var.resource_group_name
   location = var.location_name
 
@@ -10,8 +10,8 @@ resource "azurerm_resource_group" "vm" {
 
 resource "azurerm_network_security_group" "cp2SecGroup" {
   name                = "sshtraffic"
-  location            = azurerm_resource_group.vm.location
-  resource_group_name = azurerm_resource_group.vm.name
+  location            = azurerm_resource_group.cp2.location
+  resource_group_name = azurerm_resource_group.cp2.name
 
   security_rule {
     name                       = "SSH"

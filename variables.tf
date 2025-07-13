@@ -21,3 +21,8 @@ variable "subnet_name" {
   default     = "subnet-cp2"
   description = "Subnet de azure CP2"
 }
+
+variable "acr_name" {
+  default     = "jrurudevops"
+  description = "Nombre del nombre del registro AZR"
+}

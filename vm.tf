@@ -1,10 +1,10 @@
-resource "azurerm_linux_virtual_machine" "vm" {
+resource "azurerm_linux_virtual_machine" "cp2" {
   name                  = "vm-cp2"
   resource_group_name   = var.resource_group_name
   location              = var.location_name
   size                  = "Standard_B1s"
   admin_username        = "azureuser"
-  network_interface_ids = [azurerm_network_interface.vm.id]
+  network_interface_ids = [azurerm_network_interface.cp2.id]
   admin_ssh_key {
     username   = "azureuser"
     public_key = file("~/.ssh/id_rsa.pub")
