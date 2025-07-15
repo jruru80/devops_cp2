@@ -4,7 +4,7 @@ variable "resource_group_name" {
 }
 variable "location_name" {
   default     = "West Europe"
-  description = "Usado para indicar la localizacion"
+  description = "Usado para indicar la localizacion de Azure"
 }
 
 variable "nic_name" {
@@ -24,5 +24,14 @@ variable "subnet_name" {
 
 variable "acr_name" {
   default     = "jrurudevops"
-  description = "Nombre del nombre del registro AZR"
+  description = "Nombre del registro ACR"
+}
+
+variable "aks_name" {
+  default     = "aks_cp2"
+  description = "Nombre AKS"
+}
+variable "aks_prefix" {
+  default     = "cp2"
+  description = "Nombre AKS"
 }

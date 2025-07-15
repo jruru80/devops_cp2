@@ -35,7 +35,7 @@ resource "azurerm_network_interface" "cp2" {
   ]
 
   tags = {
-    environment = "CP2"
+    environment = "casopractico2"
   }
 }
 
@@ -48,7 +48,7 @@ resource "azurerm_public_ip" "cp2" {
   #Cannot create more than 0 IPv4 Basic SKU public IP addresses for this subscription in this region
 
   tags = {
-    environment = "CP2"
+    environment = "casopractico2"
   }
 }
 

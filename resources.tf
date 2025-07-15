@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "cp2" {
   location = var.location_name
 
   tags = {
-    environment = "CP2"
+    environment = "casopractico2"
   }
 }
 
@@ -26,7 +26,7 @@ resource "azurerm_network_security_group" "cp2SecGroup" {
   }
 
   tags = {
-    environment = "CP2"
+    environment = "casopractico2"
   }
 }
 
