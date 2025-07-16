@@ -1,0 +1,21 @@
+---
+- name: Python, ACR, Apps
+  hosts: localhost
+  connection: local
+  become: yes
+  vars_files:
+    -credentials.yml
+
+  roles:
+    - python
+    - acr
+    - app
+
+- name: Webserver
+  hosts: virtual_machine
+  become: yes
+  remote_user: "{{ ssh_remote_user }}"
+  vars_files:
+    - credentials.yml
+  roles:
+    - webserver

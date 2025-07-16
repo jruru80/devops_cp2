@@ -1,0 +1,22 @@
+#Recorremos las imagenes definidas en defaults/main.yml para descargarlas, hacerles tag y subirlas
+
+- name: Download images
+  containers.podman.podman_image:
+      name: "{{ item.source }}/{{ item.name }}:{{ item.tag }}"
+  loop: "{{ container_images }}"
+
+- name: Tag images
+  containers.podman.podman_tag:
+    image: "{{ item.source }}"
+    target_names:
+      - "{{ azure_acr_name }}.azurecr.io/{{ item.name }}:{{ item.tag }}"
+    loop: "{{ container_images }}"
+
+- name: Push images
+  containers.podman.podman_image: 
+    name: "{{ azure_acr_name }}.azurecr.io/{{ item.name }}:{{ item.tag }}"
+    push: yes
+    tls_verify: false
+    username: "{{ azure_acr_username }}"
+    password: "{{ azure_acr_password }}"
+  loop: "{{ container_images }}"
