@@ -1,4 +1,3 @@
----
 ssh_remote_user: "azureuser"
 acr_image: "nginx"
-acr_image_tag: "latest"
+acr_image_tag: "{{ acr_custom_tag }}"

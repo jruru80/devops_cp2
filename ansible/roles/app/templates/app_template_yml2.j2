@@ -1,9 +1,10 @@
+#Este seria nuestro manifiesto, donde definimos los deployment de back y front así como los services
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: unir
+  namespace: {{ app_namespace }}
 spec:
   replicas: 1
   selector:
@@ -16,44 +17,44 @@ spec:
     spec:
       containers:
         - name: backend
-          image: {{ azure_acr_name }}.azurecr.io/unir/redis:6.0.8
+          image: {{ azure_acr_name }}.azurecr.io/redis:{{ acr_custom_tag }}
           env:
-          - name: ALLOW_EMPTY_PASSWORD
-            value: "yes"
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
           ports:
-          - containerPort: 6379
-            name: redis
+            - containerPort: 6379
+              name: redis
 ---
-apiVersion: apps/v1
+apiVersion: v1
 kind: Service
 metadata:
   name: backend
 spec:
-  ports:
-  - port: 6379
-  - selector:
+  selector:
     app: backend
+  ports:
+    - port: 6379
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ app.frontend.name }}"
-  namespace: "{{ app_namespace }}"
+  name: {{ app.frontend.name }}
+  namespace: {{ app_namespace }}
 spec:
-  replicas: "{{ app.frontend.replicas }}"
+  replicas: {{ app.frontend.replicas }}
   selector:
     matchLabels:
-      app: "{{ app.frontend.name }}"
+      app: {{ app.frontend.name }}
   template:
     metadata:
       labels:
-        app: "{{ app.frontend.name }}"
+        app: {{ app.frontend.name }}
     spec:
       nodeSelector:
         kubernetes.io/os: linux
       containers:
-        - name: "{{ app.frontend.name }}"
-          image: "{{ azure_acr_name }}.azurecr.io/"{{ app.frontend.image }}":latest
+        - name: {{ app.frontend.name }}
+          image: {{ azure_acr_name }}.azurecr.io/{{ app.frontend.image }}:{{ acr_custom_tag }}
           resources:
             requests:
               cpu: "100m"
@@ -62,20 +63,19 @@ spec:
               cpu: "250m"
               memory: "256Mi"
           ports:
-          - containerPort: 80
+            - containerPort: 80
           env:
             - name: REDIS
-              value: "backend"
-  ---
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: "{{ app.frontend.name }}"
-    namespace: "{{ app_namespace }}"
-  spec:
-    type: LoadBalancer
-    ports:
+              value: backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ app.frontend.name }}
+  namespace: {{ app_namespace }}
+spec:
+  type: LoadBalancer
+  selector:
+    app: {{ app.frontend.name }}
+  ports:
     - port: 80
-    selector:
-  app: frontend
-  

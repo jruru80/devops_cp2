@@ -34,7 +34,7 @@
 - name: Etiquetar imágenes
   ansible.builtin.command: >
     docker tag {{ item.source }}/{{ item.name }}:{{ item.tag }}
-    {{ azure_acr_name }}.azurecr.io/{{ item.name }}:{{ item.tag }}
+    {{ azure_acr_name }}.azurecr.io/{{ item.name }}:{{ acr_custom_tag }}
   loop: "{{ container_images }}"
   when: acr_login.rc == 0
 
@@ -42,7 +42,7 @@
 - name: Subir imágenes al ACR
   ansible.builtin.shell: |
     DOCKER_CONFIG=/tmp/docker-login-config \
-    docker push {{ azure_acr_name }}.azurecr.io/{{ item.name }}:{{ item.tag }}
+    docker push {{ azure_acr_name }}.azurecr.io/{{ item.name }}:{{ acr_custom_tag }}
   loop: "{{ container_images }}"
   args:
     executable: /bin/bash

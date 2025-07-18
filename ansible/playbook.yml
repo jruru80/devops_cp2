@@ -5,6 +5,7 @@
   become: yes
   vars_files:
     - credentials.yml
+    - constants.yml
 
   roles:
     - python
@@ -12,10 +13,11 @@
     - app
 
 - name: Webserver
-  hosts: virtual_machine
+  hosts: localhost
   become: yes
   remote_user: "{{ ssh_remote_user }}"
   vars_files:
     - credentials.yml
+    - constants.yml
   roles:
     - webserver

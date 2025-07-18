@@ -1,0 +1,15 @@
+- name: Crear namespace en Kubernetes
+  vars:
+    ansible_python_interpreter: "{{ lookup('env', 'HOME') }}/.local/pipx/venvs/ansible/bin/python"
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Namespace
+    name: "{{ app_namespace }}"
+    state: present
+    kubeconfig: "{{ lookup('env','HOME') }}/.kube/config"
+
+- name: Deploy App 
+  k8s: 
+    definition: "{{ lookup('template', 'app_template_yml2.j2') }}"
+    namespace: "{{ app_namespace }}"
+    kubeconfig: "{{ lookup('env','HOME') }}/.kube/config"

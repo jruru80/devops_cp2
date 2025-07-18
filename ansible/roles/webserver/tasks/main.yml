@@ -1,26 +1,18 @@
-- name: Update package list
-  become: true
-  apt:
-    update_cache: yes
+- name: Ensure Docker is running (solo recordatorio)
+  debug:
+    msg: "Asegúrate de que Docker Desktop esté iniciado en tu Mac antes de ejecutar este playbook."
 
-- name: Install Podman
-  become: true
-  apt:
-    name: podman
-    state: present
-  
-- name: ACR login
-  containers.podman.podman_login:
+- name: ACR login with Docker
+  community.docker.docker_login:
+    registry_url: "{{ azure_acr_name }}.azurecr.io"
     username: "{{ azure_acr_username }}"
     password: "{{ azure_acr_password }}"
-    registry: "{{ azure_acr_name }}.azurecr.io"
   when: azure_acr_username is defined and azure_acr_password is defined
 
-- name: Run gninx webserver as a container using podman
-  containers.podman.podman_container:
+- name: Run nginx webserver as a container with Docker
+  community.docker.docker_container:
     name: webserver
     image: "{{ azure_acr_name }}.azurecr.io/{{ acr_image }}:{{ acr_image_tag }}"
     state: started
-    #con 0.0.0.0 se respeta cualquier ip
-    ports:
-      - "0.0.0.0:80:80" 
+    published_ports:
+      - "80:80"
