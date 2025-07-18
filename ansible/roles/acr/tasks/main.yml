@@ -1,22 +1,57 @@
-#Recorremos las imagenes definidas en defaults/main.yml para descargarlas, hacerles tag y subirlas
+- name: Verificar si Docker está activo
+  ansible.builtin.command: docker info
+  register: docker_check
+  ignore_errors: true
 
-- name: Download images
-  containers.podman.podman_image:
-      name: "{{ item.source }}/{{ item.name }}:{{ item.tag }}"
+- name: Mostrar advertencia si Docker no está disponible
+  ansible.builtin.debug:
+    msg: "🚨 Docker no está disponible o no se está ejecutando en este sistema."
+  when: docker_check.failed
+
+# Login temporal sin guardar credenciales ni activar Keychain
+- name: Crear configuración temporal y login seguro
+  ansible.builtin.shell: |
+    mkdir -p /tmp/docker-login-config
+    echo '{ "auths": { "{{ azure_acr_name }}.azurecr.io": {} } }' > /tmp/docker-login-config/config.json
+    echo "{{ azure_acr_password }}" | DOCKER_CONFIG=/tmp/docker-login-config \
+      docker login {{ azure_acr_name }}.azurecr.io \
+      --username {{ azure_acr_username }} \
+      --password-stdin
+  args:
+    executable: /bin/bash
+  register: acr_login
+  failed_when: acr_login.rc != 0
+  when: not docker_check.failed
+
+# Descargar imágenes públicas
+- name: Descargar imágenes
+  ansible.builtin.command: >
+    docker pull {{ item.source }}/{{ item.name }}:{{ item.tag }}
   loop: "{{ container_images }}"
+  when: acr_login.rc == 0
 
-- name: Tag images
-  containers.podman.podman_tag:
-    image: "{{ item.source }}"
-    target_names:
-      - "{{ azure_acr_name }}.azurecr.io/{{ item.name }}:{{ item.tag }}"
-    loop: "{{ container_images }}"
-
-- name: Push images
-  containers.podman.podman_image: 
-    name: "{{ azure_acr_name }}.azurecr.io/{{ item.name }}:{{ item.tag }}"
-    push: yes
-    tls_verify: false
-    username: "{{ azure_acr_username }}"
-    password: "{{ azure_acr_password }}"
+# Etiquetar imágenes para el ACR
+- name: Etiquetar imágenes
+  ansible.builtin.command: >
+    docker tag {{ item.source }}/{{ item.name }}:{{ item.tag }}
+    {{ azure_acr_name }}.azurecr.io/{{ item.name }}:{{ item.tag }}
   loop: "{{ container_images }}"
+  when: acr_login.rc == 0
+
+# Subir imágenes al ACR
+- name: Subir imágenes al ACR
+  ansible.builtin.shell: |
+    DOCKER_CONFIG=/tmp/docker-login-config \
+    docker push {{ azure_acr_name }}.azurecr.io/{{ item.name }}:{{ item.tag }}
+  loop: "{{ container_images }}"
+  args:
+    executable: /bin/bash
+  when: acr_login.rc == 0
+
+
+# Limpieza de configuración temporal
+- name: Eliminar configuración temporal
+  ansible.builtin.file:
+    path: /tmp/docker-login-config
+    state: absent
+  when: not docker_check.failed

@@ -1,34 +1,81 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ app.backend.name }}"
-  namespace: "{{ app.namespace }}"
+  name: backend
+  namespace: unir
 spec:
-  replicas: "{{ app.backend.replicas }}"
+  replicas: 1
   selector:
     matchLabels:
-      app: "{{ app.backend.name }}"
+      app: backend
   template:
     metadata:
       labels:
-        app: "{{ app.backend.name }}"
+        app: backend
     spec:
       containers:
-        - name: "{{ app.backend.name }}"
-          image: "{{ azure_acr_name }}.azurecr.io/"{{ app.backend.image }}":latest
-          resources: {}
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-          imagePullPolicy: Always
-      restartPolicy: Always
-      terminationGracePeriodSeconds: 30
-      dnsPolicy: ClusterFirst
-      securityContext: {}
-      schedulerName: default-scheduler
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 25%
-      maxSurge: 25%
-  revisionHistoryLimit: 10
-  progressDeadlineSeconds: 600
+        - name: backend
+          image: {{ azure_acr_name }}.azurecr.io/unir/redis:6.0.8
+          env:
+          - name: ALLOW_EMPTY_PASSWORD
+            value: "yes"
+          ports:
+          - containerPort: 6379
+            name: redis
+---
+apiVersion: apps/v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  ports:
+  - port: 6379
+  - selector:
+    app: backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ app.frontend.name }}"
+  namespace: "{{ app_namespace }}"
+spec:
+  replicas: "{{ app.frontend.replicas }}"
+  selector:
+    matchLabels:
+      app: "{{ app.frontend.name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ app.frontend.name }}"
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: "{{ app.frontend.name }}"
+          image: "{{ azure_acr_name }}.azurecr.io/"{{ app.frontend.image }}":latest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          ports:
+          - containerPort: 80
+          env:
+            - name: REDIS
+              value: "backend"
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: "{{ app.frontend.name }}"
+    namespace: "{{ app_namespace }}"
+  spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+    selector:
+  app: frontend
+  
