@@ -1,0 +1,15 @@
+#No puedo instalar python3 si no esta disponible ya que uso mac y con homebrew no se permite, lo comenté en el foro
+- name: Verify Python3 installation
+  command: python3 --version
+  register: python3_version
+  changed_when: false
+
+- name: Print Python3 version
+  debug:
+    msg: "Python version is {{ python3_version.stdout }}"
+
+- name: Ensure pip is installed
+  command: python3 -m ensurepip
+  register: pip_install
+  changed_when: false
+  ignore_errors: yes

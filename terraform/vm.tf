@@ -1,10 +1,10 @@
-resource "azurerm_linux_virtual_machine" "cp2" {
+resource "azurerm_linux_virtual_machine" "virtual_machine" {
   name                  = "vm-cp2"
   resource_group_name   = var.resource_group_name
   location              = var.location_name
   size                  = "Standard_B1s"
   admin_username        = "azureuser"
-  network_interface_ids = [azurerm_network_interface.cp2.id]
+  network_interface_ids = [azurerm_network_interface.network_interface.id]
   admin_ssh_key {
     username   = "azureuser"
     public_key = file("~/.ssh/id_rsa.pub")
@@ -19,4 +19,8 @@ resource "azurerm_linux_virtual_machine" "cp2" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+}
+resource "tls_private_key" "ssh_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }

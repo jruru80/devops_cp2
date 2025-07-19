@@ -1,0 +1,14 @@
+### Se definen cuales son las imagenes definidas, que las tareas asociadas deben descargar, tagear y hacer push
+---
+container_images:
+  - name: nginx
+    source: "docker.io/library"
+    tag: "latest"
+  
+  - name: redis
+    tag: 6.0.8
+    source: docker.io/bitnami
+
+  - name: "azure-vote-front"
+    source: "docker.io/suhuruli"
+    tag: "latest"

@@ -1,0 +1,9 @@
+- name: Run nginx webserver as a container with Podman
+  containers.podman.podman_container:
+    name: webserver
+    image: "{{ azure_acr_name }}.azurecr.io/{{ acr_image }}:{{ acr_image_tag }}"
+    state: started
+    publish:
+      - "80:80"
+  environment:
+    PATH: "{{ lookup('env', 'PATH') }}"

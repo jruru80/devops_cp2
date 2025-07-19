@@ -1,0 +1,24 @@
+- name: Obtener credenciales de AKS
+  ansible.builtin.command: >
+    az aks get-credentials --resource-group {{ aks_resource_group }} --name {{ aks_cluster_name }} --overwrite-existing
+  environment:
+    AZURE_CONFIG_DIR: "{{ lookup('env', 'HOME') }}/.azure"
+  register: aks_creds
+  changed_when: "'Merged' in aks_creds.stdout"
+  ignore_errors: true
+
+- name: Crear namespace en Kubernetes
+  vars:
+    ansible_python_interpreter: "{{ lookup('env', 'HOME') }}/.local/pipx/venvs/ansible/bin/python"
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Namespace
+    name: "{{ app_namespace }}"
+    state: present
+    kubeconfig: "{{ lookup('env','HOME') }}/.kube/config"
+
+- name: Deploy App 
+  k8s: 
+    definition: "{{ lookup('template', 'app_template_yml2.j2') }}"
+    namespace: "{{ app_namespace }}"
+    kubeconfig: "{{ lookup('env','HOME') }}/.kube/config"

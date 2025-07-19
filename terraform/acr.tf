@@ -1,12 +1,12 @@
 
 #Create ACR user assignet identity
 resource "azurerm_user_assigned_identity" "acr_identity" {
-  resource_group_name = azurerm_resource_group.cp2.name
-  location            = azurerm_resource_group.cp2.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+  location            = azurerm_resource_group.resource_group.location
   name                = "${var.acr_name}Identity"
 
   depends_on = [
-    azurerm_resource_group.cp2
+    azurerm_resource_group.resource_group
   ]
 
   lifecycle {
@@ -21,10 +21,10 @@ resource "random_string" "random" {
   special = false
 }
 
-resource "azurerm_container_registry" "acr_container_registry" {
-  resource_group_name   = azurerm_resource_group.cp2.name
-  location              = azurerm_resource_group.cp2.location
+resource "azurerm_container_registry" "acr" {
   name                  = "${var.acr_name}${random_string.random.result}"
+  resource_group_name   = azurerm_resource_group.resource_group.name
+  location              = azurerm_resource_group.resource_group.location
   sku                   = "Basic"
   admin_enabled         = true
   data_endpoint_enabled = false
@@ -37,7 +37,7 @@ resource "azurerm_container_registry" "acr_container_registry" {
   }
 
   tags = {
-    environment = "CP2"
+    environment = "casopractico2"
   }
 
   lifecycle {
@@ -46,7 +46,7 @@ resource "azurerm_container_registry" "acr_container_registry" {
     ]
   }
 
-  depends_on = [azurerm_resource_group.cp2, random_string.random]
+  depends_on = [azurerm_resource_group.resource_group, random_string.random]
 
 
 }

@@ -1,0 +1,25 @@
+app: 
+  backend:
+    name: backend 
+    image: redis:{{ acr_custom_tag }}
+    replicas: 1
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+    port: 6379
+    pv: redis-data
+    pvc: redis-pvc
+    mountPath: /bitnami/redis/data
+  frontend:
+    name: frontend
+    image: azure-vote-front:{{ acr_custom_tag }}
+    replicas: 1
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
