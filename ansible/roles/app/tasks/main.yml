@@ -1,3 +1,12 @@
+- name: Obtener credenciales de AKS
+  ansible.builtin.command: >
+    az aks get-credentials --resource-group {{ aks_resource_group }} --name {{ aks_cluster_name }} --overwrite-existing
+  environment:
+    AZURE_CONFIG_DIR: "{{ lookup('env', 'HOME') }}/.azure"
+  register: aks_creds
+  changed_when: "'Merged' in aks_creds.stdout"
+  ignore_errors: true
+
 - name: Crear namespace en Kubernetes
   vars:
     ansible_python_interpreter: "{{ lookup('env', 'HOME') }}/.local/pipx/venvs/ansible/bin/python"

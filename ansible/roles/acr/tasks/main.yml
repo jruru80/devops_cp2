@@ -1,3 +1,17 @@
+- name: Iniciar Docker Desktop en macOS
+  ansible.builtin.command: open -a Docker
+  when: ansible_connection == 'local' and ansible_facts['os_family'] == 'Darwin'
+  ignore_errors: true
+
+- name: Esperar hasta que Docker esté listo en macOS
+  ansible.builtin.command: docker info
+  register: docker_check
+  until: docker_check.rc == 0
+  retries: 15
+  delay: 6
+  when: ansible_connection == 'local' and ansible_facts['os_family'] == 'Darwin'
+  ignore_errors: true
+
 - name: Verificar si Docker está activo
   ansible.builtin.command: docker info
   register: docker_check
@@ -5,7 +19,7 @@
 
 - name: Mostrar advertencia si Docker no está disponible
   ansible.builtin.debug:
-    msg: "🚨 Docker no está disponible o no se está ejecutando en este sistema."
+    msg: "Docker no está disponible o no se está ejecutando en este sistema."
   when: docker_check.failed
 
 # Login temporal sin guardar credenciales ni activar Keychain
