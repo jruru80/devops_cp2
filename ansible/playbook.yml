@@ -2,7 +2,6 @@
 - name: Python, ACR, Apps
   hosts: localhost
   connection: local
-  become: yes
   vars_files:
     - credentials.yml
     - constants.yml
@@ -14,7 +13,6 @@
 
 - name: Webserver
   hosts: localhost
-  become: yes
   remote_user: "{{ ssh_remote_user }}"
   vars_files:
     - credentials.yml

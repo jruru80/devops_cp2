@@ -1,18 +1,9 @@
-- name: Ensure Docker is running (solo recordatorio)
-  debug:
-    msg: "Asegúrate de que Docker Desktop esté iniciado en tu Mac antes de ejecutar este playbook."
-
-- name: ACR login with Docker
-  community.docker.docker_login:
-    registry_url: "{{ azure_acr_name }}.azurecr.io"
-    username: "{{ azure_acr_username }}"
-    password: "{{ azure_acr_password }}"
-  when: azure_acr_username is defined and azure_acr_password is defined
-
-- name: Run nginx webserver as a container with Docker
-  community.docker.docker_container:
+- name: Run nginx webserver as a container with Podman
+  containers.podman.podman_container:
     name: webserver
     image: "{{ azure_acr_name }}.azurecr.io/{{ acr_image }}:{{ acr_image_tag }}"
     state: started
-    published_ports:
+    publish:
       - "80:80"
+  environment:
+    PATH: "{{ lookup('env', 'PATH') }}"
