@@ -1,3 +1,5 @@
+#Se definen las variables de back y front usadas por el Jinja2 app_template_yml2.j2
+# Usada para desplegar la aplicación en Kubernetes.
 app: 
   backend:
     name: backend 

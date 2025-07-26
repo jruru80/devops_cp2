@@ -1,3 +1,6 @@
+# Este rol realiza la descarga de imágenes de contenedores desde el ACR,
+# las etiqueta con un tag personalizado, definido en constants.yml y las sube de nuevo al ACR.
+# Utiliza el módulo 'containers.podman' de Ansible galaxy
 - name: Download images
   containers.podman.podman_image:
     name: "{{ item.source }}/{{ item.name }}:{{ item.tag }}"

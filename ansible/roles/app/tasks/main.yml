@@ -1,3 +1,4 @@
+#Con este paso, evitamos tener que hacer az aks get-credentials manualmente.
 - name: Obtener credenciales de AKS
   ansible.builtin.command: >
     az aks get-credentials --resource-group {{ aks_resource_group }} --name {{ aks_cluster_name }} --overwrite-existing
@@ -7,6 +8,7 @@
   changed_when: "'Merged' in aks_creds.stdout"
   ignore_errors: true
 
+# Se crea un namespace en Kubernetes para la aplicación.
 - name: Crear namespace en Kubernetes
   vars:
     ansible_python_interpreter: "{{ lookup('env', 'HOME') }}/.local/pipx/venvs/ansible/bin/python"
@@ -17,6 +19,8 @@
     state: present
     kubeconfig: "{{ lookup('env','HOME') }}/.kube/config"
 
+# Se despliega la aplicación en el namespace creado.
+# Utiliza una plantilla Jinja2 para definir la configuración de la aplicación.
 - name: Deploy App 
   k8s: 
     definition: "{{ lookup('template', 'app_template_yml2.j2') }}"

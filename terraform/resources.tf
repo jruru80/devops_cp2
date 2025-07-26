@@ -1,4 +1,7 @@
-# Resource group de azure, de donde cuelgan los recursos
+# Resource group de azure, de donde cuelgan los recursos creados
+# De esta forma es más fácil gestionar los recursos y eliminarlos a la vez 
+# Utilizando terraform destroy
+# En mi caso, el nombre del grupo de recursos es "casopractico2"
 resource "azurerm_resource_group" "resource_group" {
   name     = var.resource_group_name
   location = var.location_name
@@ -8,6 +11,8 @@ resource "azurerm_resource_group" "resource_group" {
   }
 }
 
+# Crea un grupo de seguridad de red para permitir el tráfico SSH a la máquina virtual.
+# Permite el acceso a la máquina virtual a través del puerto 22 (SSH).
 resource "azurerm_network_security_group" "security_group" {
   name                = "sshtraffic"
   location            = azurerm_resource_group.resource_group.location

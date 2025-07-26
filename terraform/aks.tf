@@ -1,3 +1,5 @@
+# Crea el cluster de Kubernetes en Azure (AKS).
+# Se utilizará para desplegar aplicaciones en contenedores.
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_name
   location            = azurerm_resource_group.resource_group.location

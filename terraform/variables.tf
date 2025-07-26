@@ -1,3 +1,4 @@
+# Variables de Terraform que utilizaremos en los distintos archivos de configuración.
 variable "resource_group_name" {
   default     = "rg-devops-cp2"
   description = "Usado para definir el nombre del grupo de recursos"

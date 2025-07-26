@@ -1,4 +1,5 @@
-### Se definen cuales son las imagenes definidas, que las tareas asociadas deben descargar, tagear y hacer push
+# Se definen cuales son las imagenes definidas, 
+# que las tareas asociadas deben descargar, tagear y hacer push
 ---
 container_images:
   - name: nginx

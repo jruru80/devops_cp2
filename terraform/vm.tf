@@ -1,3 +1,8 @@
+#Recurso de Azure que contiene la máquina virtual.
+# Se define el tamaño, la ubicación, el tipo de imagen (Ubuntu)
+# el nombre de usuario administrador y la clave SSH.
+# Se conecta a la interfaz de red creada anteriormente y
+# Se utiliza una clave SSH para la autenticación.
 resource "azurerm_linux_virtual_machine" "virtual_machine" {
   name                  = "vm-cp2"
   resource_group_name   = var.resource_group_name
@@ -20,6 +25,7 @@ resource "azurerm_linux_virtual_machine" "virtual_machine" {
     version   = "latest"
   }
 }
+# Crea una clave SSH para la máquina virtual.
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096

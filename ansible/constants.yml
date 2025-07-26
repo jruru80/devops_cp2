@@ -2,4 +2,5 @@
 acr_custom_tag: casopractico2
 # Nombres del aks y del resource group
 aks_resource_group: rg-devops-cp2
+# Nombre del cluster de AKS
 aks_cluster_name: aks_cp2

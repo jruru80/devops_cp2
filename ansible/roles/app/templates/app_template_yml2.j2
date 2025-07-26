@@ -1,4 +1,7 @@
-#Este seria nuestro manifiesto, donde definimos los deployment de back y front así como los services
+# Este seria nuestro manifiesto, donde definimos los deployment de back y front así como los services
+# Es una plantilla Jinja2, que se utlizara desde el main.yml del rol app.
+# Para desplegar la aplicación en Kubernetes, incluyendo un backend de Redis y un frontend
+# que se conecta al backend.
 ---
 apiVersion: apps/v1
 kind: Deployment

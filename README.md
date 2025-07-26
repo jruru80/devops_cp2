@@ -1,5 +1,7 @@
 # devops_cp2
 
+Pasos para la ejecución de Terraform para creación de la infraestructura en Azure y Ansible para configurarla:
+
 Ejecutar desde nuestro shell (dentro de la carpeta terraform):
 terraform init
 terraform fmt 

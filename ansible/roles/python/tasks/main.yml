@@ -1,3 +1,5 @@
+#Este rol se encarga de verificar si Python3 está instalado así como de pip
+
 #No puedo instalar python3 si no esta disponible ya que uso mac y con homebrew no se permite, lo comenté en el foro
 - name: Verify Python3 installation
   command: python3 --version

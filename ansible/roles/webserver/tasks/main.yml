@@ -1,3 +1,4 @@
+# Este rol se encarga de desplegar un servidor web Nginx como contenedor en Podman.
 - name: Run nginx webserver as a container with Podman
   containers.podman.podman_container:
     name: webserver
